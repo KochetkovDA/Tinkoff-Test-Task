@@ -1,0 +1,17 @@
+{
+  "name": "tinkoff-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "KochetkovDA",
+  "license": "MIT",
+  "scripts": {
+    "test": "NODE_ENV=test jest",
+    "test:dev": "NODE_ENV=test jest --watchAll"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/preset-env": "^7.6.3",
+    "babel-jest": "^24.9.0",
+    "jest": "^24.9.0"
+  }
+}
