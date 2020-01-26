@@ -11,36 +11,36 @@
 * После вызова этого метода, должен уйти запрос по адресу - https://api.tinkoff.ru/v1/personal_info?origin=web&sessionid=Kw6fYMrCrCNfTgWlIQpeNOr6ZzhuErfc.m1-prod-api02
 */
 
-const cashe = {};
-
-
 async function getSessionId() {
-        if (cashe.sessionId) { 
-            return cashe.sessionId; 
-        }
         const response = await fetch('https://api.tinkoff.ru/v1/session');
-        cashe.sessionId = (await response.json()).payload;
-        return cashe.sessionId
+        const sessionId = (await response.json()).payload;
+        return sessionId
 }
 
-async function request(api, getParams = {}) {
-   const sessionid = await getSessionId();
-   const url = new URL(`https://api.tinkoff.ru${api}`);
-
-   for (let key in getParams) {
-     url.searchParams.append(key, getParams[key])
-   }
-
-   url.searchParams.append('sessionid', sessionid);
-
-   if (cashe[url]) {
-       return cashe[url]
-   }
-
-   const response = await fetch(url);
-   cashe[url] = await response.json();
-   
-   return await cashe[url]
+async function getRequest (getSessionId) {
+  const sessionid = getSessionId ? await getSessionId(): '';
+  const cashe = {};
+  return async (api, getParams = {}) => {
+    const url = new URL(`https://api.tinkoff.ru${api}`);
+ 
+    for (let key in getParams) {
+      url.searchParams.append(key, getParams[key])
+    }
+    if (sessionid) {
+      url.searchParams.append('sessionid', sessionid);
+    }
+    if (cashe[url]) {
+        return cashe[url]
+    }
+ 
+    const response = await fetch(url);
+    cashe[url] = await response.json();
+    
+    return await cashe[url]
+ }
 }
 
-export default request;
+export {
+  getRequest, 
+  getSessionId,
+};
